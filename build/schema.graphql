@@ -1,25 +1,17 @@
-type AdminUpdated @entity(immutable: true) {
+type TokensPulled @entity(immutable: true) {
   id: Bytes!
-  oldAdmin: Bytes! # address
-  newAdmin: Bytes! # address
+  user: Bytes! # address
+  amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type ImplementationUpdated @entity(immutable: true) {
+type TokensRemoved @entity(immutable: true) {
   id: Bytes!
-  oldImplementation: Bytes! # address
-  newImplementation: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type PendingImplementationUpdated @entity(immutable: true) {
-  id: Bytes!
-  oldPendingImplementation: Bytes! # address
-  newPendingImplementation: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
