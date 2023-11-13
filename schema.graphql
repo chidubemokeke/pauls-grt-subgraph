@@ -20,14 +20,14 @@ type TokensRemoved @entity(immutable: true) {
 type Subgraph @entity {
   id: ID!
   name: String!
-  accounts: [Account!]! @derivedFrom(field: "subgraph")
+  account: Account!
 }
 
 type Account @entity {
   id: ID!
-  subgraph: Subgraph!
+  queryFeesPaid: BigInt! 
   billingBalance: BigInt!
-  transactions: [Transaction!]! @derivedFrom(field: "account")
+  subgraphs: [Subgraph!]! @derivedFrom(field: "account")
 }
 
 type Transaction @entity {
