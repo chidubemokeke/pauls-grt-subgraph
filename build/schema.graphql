@@ -1,0 +1,26 @@
+type AdminUpdated @entity(immutable: true) {
+  id: Bytes!
+  oldAdmin: Bytes! # address
+  newAdmin: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ImplementationUpdated @entity(immutable: true) {
+  id: Bytes!
+  oldImplementation: Bytes! # address
+  newImplementation: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PendingImplementationUpdated @entity(immutable: true) {
+  id: Bytes!
+  oldPendingImplementation: Bytes! # address
+  newPendingImplementation: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

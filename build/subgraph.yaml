@@ -1,0 +1,30 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Contract
+    network: arbitrum-one
+    source:
+      address: "0x9623063377AD1B27544C965cCd7342f7EA7e88C7"
+      abi: Contract
+      startBlock: 42449274
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AdminUpdated
+        - ImplementationUpdated
+        - PendingImplementationUpdated
+      abis:
+        - name: Contract
+          file: Contract/abis/Contract.json
+      eventHandlers:
+        - event: AdminUpdated(indexed address,indexed address)
+          handler: handleAdminUpdated
+        - event: ImplementationUpdated(indexed address,indexed address)
+          handler: handleImplementationUpdated
+        - event: PendingImplementationUpdated(indexed address,indexed address)
+          handler: handlePendingImplementationUpdated
+      file: Contract/Contract.wasm
