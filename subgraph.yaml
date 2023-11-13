@@ -28,18 +28,6 @@ dataSources:
         - name: billing
           file: ./abis/billing.json
       eventHandlers:
-        - event: CollectorUpdated(indexed address,bool)
-          handler: handleCollectorUpdated
-        - event: InsufficientBalanceForRemoval(indexed address,indexed address,uint256)
-          handler: handleInsufficientBalanceForRemoval
-        - event: L1BillingConnectorUpdated(address)
-          handler: handleL1BillingConnectorUpdated
-        - event: L2TokenGatewayUpdated(address)
-          handler: handleL2TokenGatewayUpdated
-        - event: NewOwnership(indexed address,indexed address)
-          handler: handleNewOwnership
-        - event: NewPendingOwnership(indexed address,indexed address)
-          handler: handleNewPendingOwnership
         - event: TokensAdded(indexed address,uint256)
           handler: handleTokensAdded
         - event: TokensPulled(indexed address,uint256)
