@@ -1,13 +1,15 @@
-Arbitrum Billing Balance Subgraph
-Overview
+# Arbitrum Billing Balance Subgraph
+
+## Overview
 This subgraph is designed to associate billing balances with each subgraph deployed on the Arbitrum network. It aims to provide clear, accessible data regarding billing transactions and balances for users and developers interacting with subgraphs within the Arbitrum ecosystem.
 
-Features
-Balance Tracking: Tracks and updates the billing balance associated with each subgraph.
+## Features
+- **Balance Tracking**: Tracks and updates the billing balance associated with each subgraph.
 
-Usage
+## Usage
 Query the subgraph using the generated GraphQL endpoint. Example query:
 
+```graphql
 {
   subgraphs {
     id
@@ -19,3 +21,4 @@ Query the subgraph using the generated GraphQL endpoint. Example query:
     }
   }
 }
+
