@@ -1,4 +1,3 @@
-
 type TokensPulled @entity(immutable: true) {
   id: Bytes!
   user: Bytes! # address
@@ -18,3 +17,22 @@ type TokensRemoved @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type Subgraph @entity {
+  id: ID!
+  name: String!
+  accounts: [Account!]! @derivedFrom(field: "subgraph")
+}
+
+type Account @entity {
+  id: ID!
+  subgraph: Subgraph!
+  billingBalance: BigInt!
+  transactions: [Transaction!]! @derivedFrom(field: "account")
+}
+
+type Transaction @entity {
+  id: ID!
+  account: Account!
+  amount: BigInt!
+  timestamp: BigInt!
+}
