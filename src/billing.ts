@@ -1,31 +1,19 @@
 import {
-  CollectorUpdated as CollectorUpdatedEvent,
-  InsufficientBalanceForRemoval as InsufficientBalanceForRemovalEvent,
-  L1BillingConnectorUpdated as L1BillingConnectorUpdatedEvent,
-  L2TokenGatewayUpdated as L2TokenGatewayUpdatedEvent,
-  NewOwnership as NewOwnershipEvent,
-  NewPendingOwnership as NewPendingOwnershipEvent,
   TokensAdded as TokensAddedEvent,
   TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-  TokensRescued as TokensRescuedEvent
-} from "../generated/billing/billing"
+  TokensRescued as TokensRescuedEvent,
+} from '../generated/billing/billing'
 import {
-  CollectorUpdated,
-  InsufficientBalanceForRemoval,
-  L1BillingConnectorUpdated,
-  L2TokenGatewayUpdated,
-  NewOwnership,
-  NewPendingOwnership,
   TokensAdded,
   TokensPulled,
   TokensRemoved,
-  TokensRescued
-} from "../generated/schema"
+  TokensRescued,
+} from '../generated/schema'
 
 export function handleCollectorUpdated(event: CollectorUpdatedEvent): void {
   let entity = new CollectorUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.collector = event.params.collector
   entity.enabled = event.params.enabled
@@ -38,10 +26,10 @@ export function handleCollectorUpdated(event: CollectorUpdatedEvent): void {
 }
 
 export function handleInsufficientBalanceForRemoval(
-  event: InsufficientBalanceForRemovalEvent
+  event: InsufficientBalanceForRemovalEvent,
 ): void {
   let entity = new InsufficientBalanceForRemoval(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.from = event.params.from
   entity.to = event.params.to
@@ -55,10 +43,10 @@ export function handleInsufficientBalanceForRemoval(
 }
 
 export function handleL1BillingConnectorUpdated(
-  event: L1BillingConnectorUpdatedEvent
+  event: L1BillingConnectorUpdatedEvent,
 ): void {
   let entity = new L1BillingConnectorUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.l1BillingConnector = event.params.l1BillingConnector
 
@@ -70,10 +58,10 @@ export function handleL1BillingConnectorUpdated(
 }
 
 export function handleL2TokenGatewayUpdated(
-  event: L2TokenGatewayUpdatedEvent
+  event: L2TokenGatewayUpdatedEvent,
 ): void {
   let entity = new L2TokenGatewayUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.l2TokenGateway = event.params.l2TokenGateway
 
@@ -86,7 +74,7 @@ export function handleL2TokenGatewayUpdated(
 
 export function handleNewOwnership(event: NewOwnershipEvent): void {
   let entity = new NewOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.from = event.params.from
   entity.to = event.params.to
@@ -99,10 +87,10 @@ export function handleNewOwnership(event: NewOwnershipEvent): void {
 }
 
 export function handleNewPendingOwnership(
-  event: NewPendingOwnershipEvent
+  event: NewPendingOwnershipEvent,
 ): void {
   let entity = new NewPendingOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.from = event.params.from
   entity.to = event.params.to
@@ -116,7 +104,7 @@ export function handleNewPendingOwnership(
 
 export function handleTokensAdded(event: TokensAddedEvent): void {
   let entity = new TokensAdded(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.user = event.params.user
   entity.amount = event.params.amount
@@ -130,7 +118,7 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
 
 export function handleTokensPulled(event: TokensPulledEvent): void {
   let entity = new TokensPulled(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.user = event.params.user
   entity.amount = event.params.amount
@@ -144,7 +132,7 @@ export function handleTokensPulled(event: TokensPulledEvent): void {
 
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
   let entity = new TokensRemoved(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.from = event.params.from
   entity.to = event.params.to
@@ -159,7 +147,7 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
 
 export function handleTokensRescued(event: TokensRescuedEvent): void {
   let entity = new TokensRescued(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.to = event.params.to
   entity.token = event.params.token
