@@ -16,16 +16,22 @@ dataSources:
       entities:
         - TokensPulled
         - TokensRemoved
+        - TokensAdded
+        - TokensRecovered # Assuming TokensRecovered is an entity you need
         - Account
         - Transaction
       abis:
         - name: billing
           file: ./abis/billing.json
       eventHandlers:
+        - event: TokensAdded(indexed address,uint256)
+          handler: handleTokensAdded
         - event: TokensPulled(indexed address,uint256)
           handler: handleTokensPulled
         - event: TokensRemoved(indexed address,indexed address,uint256)
           handler: handleTokensRemoved
+        - event: TokensRescued(indexed address,indexed address,uint256) # Assuming this is the TokensRecovered event
+          handler: handleTokensRescued
       file: ./src/billing.ts
   - kind: ethereum
     name: GNS
@@ -49,4 +55,8 @@ dataSources:
           handler: handleSubgraphPublished
         - event: SubgraphUpgraded(indexed uint256,uint256,uint256,indexed bytes32)
           handler: handleSubgraphUpgraded
+        - event: SubgraphVersionUpdated(indexed uint256,indexed bytes32,bytes32)
+          handler: handleSubgraphVersionUpdated
+        - event: SubgraphReceivedFromL1(indexed uint256,indexed uint256,indexed address,uint256)
+          handler: handleSubgraphReceivedFromL1
       file: ./src/gns.ts
