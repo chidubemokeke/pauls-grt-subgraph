@@ -25,11 +25,7 @@ type Subgraph @entity {
 
 type Account @entity {
   id: ID!
-<<<<<<< HEAD
   queryFeesPaid: BigInt!
-=======
-  queryFeesPaid: BigInt! 
->>>>>>> origin/master
   billingBalance: BigInt!
   subgraphs: [Subgraph!]! @derivedFrom(field: "account")
 }
