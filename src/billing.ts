@@ -3,8 +3,6 @@ import {
   TokensAdded as TokensAddedEvent,
   TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-  BillingBalanceUpdated as BillingBalanceUpdatedEvent, // Import the event
-} from '../generated/Billing/Billing'
 import { Account, Subgraph } from '../generated/schema'
 
 // Existing handleTokensAdded function
