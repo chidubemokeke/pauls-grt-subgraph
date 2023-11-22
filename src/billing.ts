@@ -3,6 +3,7 @@ import {
   TokensAdded as TokensAddedEvent,
   TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
+  BillingBalanceUpdated as BillingBalanceUpdatedEvent, // Import the event
 } from '../generated/Billing/Billing'
 import { Account, Subgraph } from '../generated/schema'
 
@@ -12,25 +13,24 @@ import { Account, Subgraph } from '../generated/schema'
 // Existing handleTokensRemoved function
 // ...
 
-// New handler for TokensPulled event
-export function handleTokensPulled(event: TokensPulledEvent): void {
-  let accountId = event.params.user.toHexString()
-  let account = Account.load(accountId)
+// Existing handleTokensPulled function
+// ...
 
-  if (!account) {
-    account = new Account(accountId)
-    // Initialize other fields for the account
+// New handler for BillingBalanceUpdated event
+export function handleBillingBalanceUpdated(
+  event: BillingBalanceUpdatedEvent,
+): void {
+  let subgraphId = event.params.subgraphId.toString()
+  let subgraph = Subgraph.load(subgraphId)
+
+  if (!subgraph) {
+    subgraph = new Subgraph(subgraphId)
+    // Initialize other fields for the subgraph as necessary
   }
 
-  // Logic to handle tokens pulled
-  // This is where you'll add your specific logic for what should happen
-  // when tokens are pulled. This might involve updating the account's
-  // balance, recording the transaction, etc.
-
-  // Example: Update account balance (this is just a placeholder, adjust as needed)
-  // account.balance = account.balance.minus(event.params.amount)
-
-  account.save()
+  // Update the billing balance
+  subgraph.billingBalance = event.params.newBalance
+  subgraph.save()
 }
 
 // Continue with any other event handlers as needed
