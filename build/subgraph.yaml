@@ -14,12 +14,8 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - TokensPulled
-        - TokensRemoved
-        - TokensAdded
-        - TokensRecovered
         - Account
-        - Transaction
+        - Subgraph
       abis:
         - name: billing
           file: billing/abis/billing.json
@@ -30,8 +26,6 @@ dataSources:
           handler: handleTokensPulled
         - event: TokensRemoved(indexed address,indexed address,uint256)
           handler: handleTokensRemoved
-        - event: TokensRescued(indexed address,indexed address,uint256)
-          handler: handleTokensRescued
       file: billing/billing.wasm
   - kind: ethereum
     name: GNS
