@@ -26,8 +26,6 @@ dataSources:
           handler: handleTokensPulled
         - event: TokensRemoved(indexed address,indexed address,uint256)
           handler: handleTokensRemoved
-        - event: BillingBalanceUpdated(indexed uint256, uint256)
-          handler: handleBillingBalanceUpdated
       file: ./src/billing.ts
   - kind: ethereum
     name: GNS
