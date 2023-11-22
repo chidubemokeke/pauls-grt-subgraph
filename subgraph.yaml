@@ -14,12 +14,8 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - TokensPulled
-        - TokensRemoved
-        - TokensAdded
-        - TokensRecovered # Assuming TokensRecovered is an entity you need
         - Account
-        - Transaction
+        - Subgraph
       abis:
         - name: billing
           file: ./abis/billing.json
@@ -30,8 +26,7 @@ dataSources:
           handler: handleTokensPulled
         - event: TokensRemoved(indexed address,indexed address,uint256)
           handler: handleTokensRemoved
-        - event: TokensRescued(indexed address,indexed address,uint256) # Assuming this is the TokensRecovered event
-          handler: handleTokensRescued
+        # Add other event handlers as needed
       file: ./src/billing.ts
   - kind: ethereum
     name: GNS

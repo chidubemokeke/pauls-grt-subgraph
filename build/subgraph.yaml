@@ -2,21 +2,61 @@ specVersion: 0.0.5
 schema:
   file: schema.graphql
 dataSources:
-  kind: ethereum/events
-  apiVersion: 0.0.7
-  language: wasm/assemblyscript
-  entities:
-    - AdminUpdated
-    - ImplementationUpdated
-    - PendingImplementationUpdated
-  abis:
-    - name: Contract
-      file: Contract/abis/Contract.json
-  eventHandlers:
-    - event: AdminUpdated(indexed address,indexed address)
-      handler: handleAdminUpdated
-    - event: ImplementationUpdated(indexed address,indexed address)
-      handler: handleImplementationUpdated
-    - event: PendingImplementationUpdated(indexed address,indexed address)
-      handler: handlePendingImplementationUpdated
-  file: Contract/Contract.wasm
+  - kind: ethereum
+    name: billing
+    network: arbitrum-one
+    source:
+      address: "0x1b07d3344188908fb6deceac381f3ee63c48477a"
+      abi: billing
+      startBlock: 42472346
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TokensPulled
+        - TokensRemoved
+        - TokensAdded
+        - TokensRecovered
+        - Account
+        - Transaction
+      abis:
+        - name: billing
+          file: billing/abis/billing.json
+      eventHandlers:
+        - event: TokensAdded(indexed address,uint256)
+          handler: handleTokensAdded
+        - event: TokensPulled(indexed address,uint256)
+          handler: handleTokensPulled
+        - event: TokensRemoved(indexed address,indexed address,uint256)
+          handler: handleTokensRemoved
+        - event: TokensRescued(indexed address,indexed address,uint256)
+          handler: handleTokensRescued
+      file: billing/billing.wasm
+  - kind: ethereum
+    name: GNS
+    network: arbitrum-one
+    source:
+      address: "0x5cBDB6cfB91d435c5899Fc05741e7D371fd71667"
+      abi: GNS
+      startBlock: 113533076
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Subgraph
+        - Account
+      abis:
+        - name: GNS
+          file: GNS/abis/GNS.json
+      eventHandlers:
+        - event: SubgraphPublished(indexed uint256,indexed bytes32,uint32)
+          handler: handleSubgraphPublished
+        - event: SubgraphUpgraded(indexed uint256,uint256,uint256,indexed bytes32)
+          handler: handleSubgraphUpgraded
+        - event: SubgraphVersionUpdated(indexed uint256,indexed bytes32,bytes32)
+          handler: handleSubgraphVersionUpdated
+        - event: SubgraphReceivedFromL1(indexed uint256,indexed uint256,indexed address,uint256)
+          handler: handleSubgraphReceivedFromL1
+      file: GNS/GNS.wasm

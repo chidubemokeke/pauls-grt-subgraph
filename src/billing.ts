@@ -1,36 +1,40 @@
+import { BigInt } from '@graphprotocol/graph-ts'
 import {
   TokensAdded as TokensAddedEvent,
-  TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-  TokensRescued as TokensRescuedEvent,
-} from '../generated/billing/billing'
-import { TokensPulled, TokensRemoved } from '../generated/schema'
+} from '../generated/Billing/Billing'
+import { Account, Subgraph } from '../generated/schema'
 
-export function handleTokensPulled(event: TokensPulledEvent): void {
-  let entity = new TokensPulled(
-    event.transaction.hash.concatI32(event.logIndex.toI32()),
-  )
-  entity.user = event.params.user
-  entity.amount = event.params.amount
+export function handleTokensAdded(event: TokensAddedEvent): void {
+  let accountId = event.params.user.toHexString()
+  let account = Account.load(accountId)
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  if (!account) {
+    account = new Account(accountId)
+    // Initialize other fields for the account
+  }
 
-  entity.save()
+  // Logic to handle tokens added
+  // Update account balance or other relevant fields
+  // ...
+
+  account.save()
 }
 
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
-  let entity = new TokensRemoved(
-    event.transaction.hash.concatI32(event.logIndex.toI32()),
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.amount = event.params.amount
+  let accountId = event.params.from.toHexString()
+  let account = Account.load(accountId)
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  if (!account) {
+    account = new Account(accountId)
+    // Initialize other fields for the account
+  }
 
-  entity.save()
+  // Logic to handle tokens removed
+  // Update account balance or other relevant fields
+  // ...
+
+  account.save()
 }
+
+// Add similar handlers for other events like TokensPulled, etc.

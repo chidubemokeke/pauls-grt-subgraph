@@ -16,3 +16,23 @@ type TokensRemoved @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Subgraph @entity {
+  id: ID!
+  name: String!
+  account: Account!
+}
+
+type Account @entity {
+  id: ID!
+  queryFeesPaid: BigInt!
+  billingBalance: BigInt!
+  subgraphs: [Subgraph!]! @derivedFrom(field: "account")
+}
+
+type Transaction @entity {
+  id: ID!
+  account: Account!
+  amount: BigInt!
+  timestamp: BigInt!
+}
