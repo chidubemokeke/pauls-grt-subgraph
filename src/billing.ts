@@ -1,34 +1,53 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import {
   TokensAdded as TokensAddedEvent,
-  TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-import { Account, Subgraph } from '../generated/schema'
+  TokensPulled as TokensPulledEvent,
+  InsufficientBalanceForRemoval as InsufficientBalanceForRemovalEvent,
+} from '../generated/Billing/Billing'
+import { Account } from '../generated/schema'
 
-// Existing handleTokensAdded function
-// ...
+// Handle TokensAdded event
+export function handleTokensAdded(event: TokensAddedEvent): void {
+  let accountId = event.params.user.toHex()
+  let account = Account.load(accountId)
 
-// Existing handleTokensRemoved function
-// ...
-
-// Existing handleTokensPulled function
-// ...
-
-// New handler for BillingBalanceUpdated event
-export function handleBillingBalanceUpdated(
-  event: BillingBalanceUpdatedEvent,
-): void {
-  let subgraphId = event.params.subgraphId.toString()
-  let subgraph = Subgraph.load(subgraphId)
-
-  if (!subgraph) {
-    subgraph = new Subgraph(subgraphId)
-    // Initialize other fields for the subgraph as necessary
+  if (!account) {
+    account = new Account(accountId)
+    account.balance = BigInt.fromI32(0)
   }
 
-  // Update the billing balance
-  subgraph.billingBalance = event.params.newBalance
-  subgraph.save()
+  account.balance = account.balance.plus(event.params.amount)
+  account.save()
+}
+
+// Handle TokensRemoved event
+export function handleTokensRemoved(event: TokensRemovedEvent): void {
+  let accountId = event.params.from.toHex()
+  let account = Account.load(accountId)
+
+  if (account) {
+    account.balance = account.balance.minus(event.params.amount)
+    account.save()
+  }
+}
+
+// Handle TokensPulled event
+export function handleTokensPulled(event: TokensPulledEvent): void {
+  let accountId = event.params.user.toHex()
+  let account = Account.load(accountId)
+
+  if (account) {
+    account.balance = account.balance.minus(event.params.amount)
+    account.save()
+  }
+}
+
+// Handle InsufficientBalanceForRemoval event (optional)
+export function handleInsufficientBalanceForRemoval(
+  event: InsufficientBalanceForRemovalEvent,
+): void {
+  // This event does not affect the balance but can be logged or used for analytics
 }
 
 // Continue with any other event handlers as needed
