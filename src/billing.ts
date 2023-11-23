@@ -3,51 +3,39 @@ import {
   TokensAdded as TokensAddedEvent,
   TokensRemoved as TokensRemovedEvent,
   TokensPulled as TokensPulledEvent,
-  InsufficientBalanceForRemoval as InsufficientBalanceForRemovalEvent,
 } from '../generated/Billing/Billing'
 import { Account } from '../generated/schema'
 
-// Handle TokensAdded event
+// Helper functions to create or load an Account
+function createOrLoadAccount(id: string): Account {
+  let account = Account.load(id)
+  if (account == null) {
+    account = new Account(id)
+    account.billingBalance = BigInt.zero()
+    // Initialize other necessary fields
+  }
+  return account
+}
+
 export function handleTokensAdded(event: TokensAddedEvent): void {
-  let accountId = event.params.user.toHex()
-  let account = Account.load(accountId)
-
-  if (!account) {
-    account = new Account(accountId)
-    account.balance = BigInt.fromI32(0)
-  }
-
-  account.balance = account.balance.plus(event.params.amount)
+  let account = createOrLoadAccount(event.params.user.toHex())
+  account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.save()
+  // Additional logic for transactions or daily data
 }
 
-// Handle TokensRemoved event
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
-  let accountId = event.params.from.toHex()
-  let account = Account.load(accountId)
-
-  if (account) {
-    account.balance = account.balance.minus(event.params.amount)
-    account.save()
-  }
+  let account = createOrLoadAccount(event.params.from.toHex())
+  account.billingBalance = account.billingBalance.minus(event.params.amount)
+  account.save()
+  // Additional logic for transactions or daily data
 }
 
-// Handle TokensPulled event
 export function handleTokensPulled(event: TokensPulledEvent): void {
-  let accountId = event.params.user.toHex()
-  let account = Account.load(accountId)
-
-  if (account) {
-    account.balance = account.balance.minus(event.params.amount)
-    account.save()
-  }
+  let account = createOrLoadAccount(event.params.user.toHex())
+  account.billingBalance = account.billingBalance.minus(event.params.amount)
+  account.save()
+  // Additional logic for transactions or daily data
 }
 
-// Handle InsufficientBalanceForRemoval event (optional)
-export function handleInsufficientBalanceForRemoval(
-  event: InsufficientBalanceForRemovalEvent,
-): void {
-  // This event does not affect the balance but can be logged or used for analytics
-}
-
-// Continue with any other event handlers as needed
+// Additional handlers for other events
