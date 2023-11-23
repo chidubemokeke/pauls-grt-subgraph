@@ -1,31 +1,48 @@
 import {
   SubgraphPublished as SubgraphPublishedEvent,
   SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
+  SubgraphUpgraded as SubgraphUpgradedEvent,
+  SubgraphReceivedFromL1 as SubgraphReceivedFromL1Event,
   // Import other necessary events
 } from '../generated/GNS/GNS'
-import // Import necessary schema entities
-// For example, if you have a Billing entity or similar
-'../generated/schema'
+import {
+  Subgraph as SubgraphEntity,
+  SubgraphVersion as SubgraphVersionEntity,
+  // Import other necessary schema entities
+} from '../generated/schema'
 
-export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  // Assuming you have a way to track new subgraphs in your schema
-  // Create or update the entity that represents a subgraph
-  // For example:
-  // let subgraph = new SubgraphEntity(event.params.subgraphID.toHex());
-  // subgraph.someField = ...;
-  // subgraph.save();
+// Existing handlers...
+
+export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
+  // Assuming you have an entity to represent an upgraded subgraph
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+
+  if (!subgraph) {
+    subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+    // Initialize other fields for the subgraph as necessary
+  }
+
+  // Update fields related to the subgraph upgrade
+  subgraph.currentVersionHash = event.params.newVersionHash.toHexString()
+  // Update other fields as necessary
+  subgraph.save()
 }
 
-export function handleSubgraphVersionUpdated(
-  event: SubgraphVersionUpdatedEvent,
+export function handleSubgraphReceivedFromL1(
+  event: SubgraphReceivedFromL1Event,
 ): void {
-  // Assuming you have a way to track subgraph versions
-  // Create or update the entity that represents a subgraph version
-  // For example:
-  // let version = new SubgraphVersionEntity(event.params.versionHash);
-  // version.subgraphID = event.params.subgraphID.toHex();
-  // version.someOtherField = ...;
-  // version.save();
+  // Assuming you have an entity to represent a subgraph received from L1
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+
+  if (!subgraph) {
+    subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+    // Initialize other fields for the subgraph as necessary
+  }
+
+  // Update fields related to the subgraph received from L1
+  subgraph.someField = // Set the appropriate field here
+    // Update other fields as necessary
+    subgraph.save()
 }
 
-// Implement other event handlers as needed
+// Continue with other event handlers as needed
