@@ -25,8 +25,6 @@ dataSources:
           handler: handleTokensPulled
         - event: TokensRemoved(indexed address,indexed address,uint256)
           handler: handleTokensRemoved
-        - event: InsufficientBalanceForRemoval(indexed address,indexed address,uint256)
-          handler: handleInsufficientBalanceForRemoval
       file: billing/billing.wasm
   - kind: ethereum
     name: GNS
