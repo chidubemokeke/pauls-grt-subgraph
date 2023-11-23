@@ -16,4 +16,4 @@ type Transaction @entity {
   account: Account!
   amount: BigInt!
   timestamp: BigInt
-  
+}
