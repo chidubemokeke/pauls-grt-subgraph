@@ -13,6 +13,7 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
   if (!account) {
     account = new AccountEntity(event.params.user.toHex())
     account.billingBalance = BigInt.fromI32(0)
+    account.queryFeesPaid = BigInt.fromI32(0)
   }
   account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.save()
