@@ -1,31 +1,37 @@
+import { BigInt } from '@graphprotocol/graph-ts'
 import {
-  SubgraphPublished as SubgraphPublishedEvent,
-  SubgraphUpgraded as SubgraphUpgradedEvent,
-  // Import other necessary events
-} from '../generated/GNS/GNS'
-import {
-  Subgraph as SubgraphEntity,
-  // Import other necessary schema entities
-} from '../generated/schema'
+  TokensAdded as TokensAddedEvent,
+  TokensPulled as TokensPulledEvent,
+  TokensRemoved as TokensRemovedEvent,
+} from '../generated/Billing/Billing'
+import { Account as AccountEntity } from '../generated/schema'
 
-// Handle SubgraphPublished Event
-export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let subgraph = new SubgraphEntity(event.params.actualSubgraphID.toHex())
-  subgraph.name = 'Default Name' // Replace with actual logic
-  subgraph.account = subgraph.currentVersionHash = event.params.actualVersionHash.toHexString() // Set the account based on your event data
-  subgraph.previousVersionHash = null
-  subgraph.save()
-}
-
-// Handle SubgraphUpgraded Event
-export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
-  let subgraph = SubgraphEntity.load(event.params.actualSubgraphID.toHex())
-
-  if (subgraph) {
-    subgraph.previousVersionHash = subgraph.currentVersionHash
-    subgraph.currentVersionHash = event.params.actualNewVersionHash.toHexString()
-    subgraph.save()
+export function handleTokensAdded(event: TokensAddedEvent): void {
+  let account = AccountEntity.load(event.params.user.toHex())
+  if (!account) {
+    account = new AccountEntity(event.params.user.toHex())
+    account.billingBalance = BigInt.fromI32(0)
+    // Initialize other necessary fields
   }
+
+  account.billingBalance = account.billingBalance.plus(event.params.amount)
+  account.save()
 }
 
-// Continue with other event handlers as needed
+export function handleTokensPulled(event: TokensPulledEvent): void {
+  let account = AccountEntity.load(event.params.user.toHex())
+  if (account) {
+    account.billingBalance = account.billingBalance.minus(event.params.amount)
+    account.save()
+  }
+  // Consider handling the case where the account does not exist
+}
+
+export function handleTokensRemoved(event: TokensRemovedEvent): void {
+  let account = AccountEntity.load(event.params.from.toHex())
+  if (account) {
+    account.billingBalance = account.billingBalance.minus(event.params.amount)
+    account.save()
+  }
+  // Additional logic may be required for removed tokens
+}
