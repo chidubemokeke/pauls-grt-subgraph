@@ -10,21 +10,20 @@ import {
 
 // Handle SubgraphPublished Event
 export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let subgraph = new SubgraphEntity(event.params.[CORRECT_SUBGRAPH_ID_PROPERTY].toHex())
-  subgraph.name = "Default Name" // Replace with actual logic
-  subgraph.account = // Set the account based on your event data
-  subgraph.currentVersionHash = event.params.[CORRECT_VERSION_HASH_PROPERTY].toHexString()
+  let subgraph = new SubgraphEntity(event.params.actualSubgraphID.toHex())
+  subgraph.name = 'Default Name' // Replace with actual logic
+  subgraph.account = subgraph.currentVersionHash = event.params.actualVersionHash.toHexString() // Set the account based on your event data
   subgraph.previousVersionHash = null
   subgraph.save()
 }
 
 // Handle SubgraphUpgraded Event
 export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
-  let subgraph = SubgraphEntity.load(event.params.[CORRECT_SUBGRAPH_ID_PROPERTY].toHex())
+  let subgraph = SubgraphEntity.load(event.params.actualSubgraphID.toHex())
 
   if (subgraph) {
     subgraph.previousVersionHash = subgraph.currentVersionHash
-    subgraph.currentVersionHash = event.params.[CORRECT_NEW_VERSION_HASH_PROPERTY].toHexString()
+    subgraph.currentVersionHash = event.params.actualNewVersionHash.toHexString()
     subgraph.save()
   }
 }
