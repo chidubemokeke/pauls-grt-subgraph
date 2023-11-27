@@ -44,12 +44,6 @@ dataSources:
         - name: GNS
           file: ./abis/GNS.json
       eventHandlers:
-        - event: SubgraphPublished(indexed uint256,indexed bytes32,uint32)
-          handler: handleSubgraphPublished
-        - event: SubgraphUpgraded(indexed uint256,uint256,uint256,indexed bytes32)
-          handler: handleSubgraphUpgraded
-        - event: SubgraphVersionUpdated(indexed uint256,indexed bytes32,bytes32)
-          handler: handleSubgraphVersionUpdated
-        - event: SubgraphReceivedFromL1(indexed uint256,indexed uint256,indexed address,uint256)
-          handler: handleSubgraphReceivedFromL1
+        - event: SubgraphUpdated(indexed param1, param2) # Replace with actual event signature
+          handler: handleSubgraphUpdated
       file: ./src/gns.ts

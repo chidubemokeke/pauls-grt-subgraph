@@ -35,3 +35,10 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
     account.save()
   }
 }
+
+import { SubgraphUpdated as SubgraphUpdatedEvent } from '../generated/GNS/GNS'
+// Import other necessary schemas
+
+export function handleSubgraphUpdated(event: SubgraphUpdatedEvent): void {
+  // Implement your logic for handling the SubgraphUpdated event
+}
