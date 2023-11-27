@@ -36,9 +36,84 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
   }
 }
 
-import { SubgraphUpdated as SubgraphUpdatedEvent } from '../generated/GNS/GNS'
-// Import other necessary schemas
+import {
+  SubgraphPublished as SubgraphPublishedEvent,
+  SubgraphUpgraded as SubgraphUpgradedEvent,
+  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
+  SubgraphUpdated as SubgraphUpdatedEvent,
+} from '../generated/GNS/GNS'
+import { Subgraph as SubgraphEntity } from '../generated/schema'
 
-export function handleSubgraphUpdated(event: SubgraphUpdatedEvent): void {
-  // Implement your logic for handling the SubgraphUpdated event
+// Handle SubgraphPublished event
+export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
+  let id = event.params.subgraphID.toHex()
+  let subgraph = SubgraphEntity.load(id)
+
+  if (!subgraph) {
+    subgraph = new SubgraphEntity(id)
+    // Initialize other fields as necessary
+  }
+
+  // The event provides a subgraphDeploymentID, which you might want to store
+  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
+
+  // The event also provides reserveRatio, which you might want to store
+  // Assuming you have a field in your Subgraph entity to store this ratio
+  // subgraph.reserveRatio = event.params.reserveRatio
+
+  subgraph.save()
 }
+
+// Handle SubgraphUpgraded event
+export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
+  let id = event.params.subgraphID.toHex()
+  let subgraph = SubgraphEntity.load(id)
+
+  if (!subgraph) {
+    subgraph = new SubgraphEntity(id)
+    // Initialize other fields as necessary
+  }
+
+  // The event provides a subgraphDeploymentID, which you might want to store
+  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
+
+  // You can access other parameters like oldVersion, newVersion, and versionMetadata
+  // event.params.oldVersion
+  // event.params.newVersion
+  // event.params.versionMetadata
+
+  subgraph.save()
+}
+
+// Handle SubgraphVersionUpdated event
+export function handleSubgraphVersionUpdated(
+  event: SubgraphVersionUpdatedEvent,
+): void {
+  let id = event.params.subgraphID.toHex()
+  let subgraph = SubgraphEntity.load(id)
+
+  if (!subgraph) {
+    subgraph = new SubgraphEntity(id)
+    // Initialize other fields as necessary
+  }
+
+  // The event provides a subgraphDeploymentID, which you might want to store
+  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
+
+  // The event also provides versionMetadata, which you might want to store
+  // Assuming you have a field in your Subgraph entity to store this metadata
+  // subgraph.versionMetadata = event.params.versionMetadata
+
+  subgraph.save()
+}
+
+// Add other event handlers for Ownership Transferred and other events as needed
+
+// Handle Ownership Transferred event
+export function handleOwnershipTransferred(
+  event: OwnershipTransferredEvent,
+): void {
+  // Implement your logic for handling the Ownership Transferred event
+}
+
+// Add more event handlers as needed
