@@ -75,6 +75,40 @@ export class Subgraph extends Entity {
   set account(value: string) {
     this.set("account", Value.fromString(value));
   }
+
+  get currentVersionHash(): string | null {
+    let value = this.get("currentVersionHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set currentVersionHash(value: string | null) {
+    if (!value) {
+      this.unset("currentVersionHash");
+    } else {
+      this.set("currentVersionHash", Value.fromString(<string>value));
+    }
+  }
+
+  get previousVersionHash(): string | null {
+    let value = this.get("previousVersionHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set previousVersionHash(value: string | null) {
+    if (!value) {
+      this.unset("previousVersionHash");
+    } else {
+      this.set("previousVersionHash", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class Account extends Entity {
