@@ -50,6 +50,4 @@ dataSources:
           handler: handleSubgraphUpgraded
         - event: SubgraphVersionUpdated(indexed uint256,indexed bytes32,bytes32)
           handler: handleSubgraphVersionUpdated
-        - event: SubgraphReceivedFromL1(indexed uint256,indexed uint256,indexed address,uint256)
-          handler: handleSubgraphReceivedFromL1
       file: GNS/GNS.wasm
