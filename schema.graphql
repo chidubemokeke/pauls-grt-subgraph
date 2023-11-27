@@ -2,6 +2,8 @@ type Subgraph @entity {
   id: ID!
   name: String!
   account: Account!
+  currentVersionHash: String # Tracks the current version
+  previousVersionHash: String # Optionally track the immediate previous version
 }
 
 type Account @entity {

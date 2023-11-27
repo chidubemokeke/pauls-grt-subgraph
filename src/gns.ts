@@ -1,48 +1,33 @@
 import {
   SubgraphPublished as SubgraphPublishedEvent,
-  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
   SubgraphUpgraded as SubgraphUpgradedEvent,
-  SubgraphReceivedFromL1 as SubgraphReceivedFromL1Event,
   // Import other necessary events
 } from '../generated/GNS/GNS'
 import {
   Subgraph as SubgraphEntity,
-  SubgraphVersion as SubgraphVersionEntity,
   // Import other necessary schema entities
 } from '../generated/schema'
 
-// Existing handlers...
-
-export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
-  // Assuming you have an entity to represent an upgraded subgraph
-  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
-
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
-    // Initialize other fields for the subgraph as necessary
-  }
-
-  // Update fields related to the subgraph upgrade
-  subgraph.currentVersionHash = event.params.newVersionHash.toHexString()
-  // Update other fields as necessary
+// Handle SubgraphPublished Event
+export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
+  let subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+  subgraph.name = 'Default Name' // Replace with actual logic to determine name
+  subgraph.account = subgraph.currentVersionHash = event.params.versionHash.toHexString() // Set the account based on your event data
+  subgraph.previousVersionHash = null // No previous version yet
   subgraph.save()
 }
 
-export function handleSubgraphReceivedFromL1(
-  event: SubgraphReceivedFromL1Event,
-): void {
-  // Assuming you have an entity to represent a subgraph received from L1
+// Handle SubgraphUpgraded Event
+export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
   let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
 
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
-    // Initialize other fields for the subgraph as necessary
-  }
-
-  // Update fields related to the subgraph received from L1
-  subgraph.someField = // Set the appropriate field here
-    // Update other fields as necessary
+  if (subgraph) {
+    // Update the previous version hash to the current one before the upgrade
+    subgraph.previousVersionHash = subgraph.currentVersionHash
+    // Update the current version hash to the new version
+    subgraph.currentVersionHash = event.params.newVersionHash.toHexString()
     subgraph.save()
+  }
 }
 
 // Continue with other event handlers as needed
