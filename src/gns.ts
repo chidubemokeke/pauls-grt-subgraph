@@ -40,7 +40,6 @@ import {
   SubgraphPublished as SubgraphPublishedEvent,
   SubgraphUpgraded as SubgraphUpgradedEvent,
   SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
-  SubgraphUpdated as SubgraphUpdatedEvent,
 } from '../generated/GNS/GNS'
 import { Subgraph as SubgraphEntity } from '../generated/schema'
 
@@ -106,14 +105,3 @@ export function handleSubgraphVersionUpdated(
 
   subgraph.save()
 }
-
-// Add other event handlers for Ownership Transferred and other events as needed
-
-// Handle Ownership Transferred event
-export function handleOwnershipTransferred(
-  event: OwnershipTransferredEvent,
-): void {
-  // Implement your logic for handling the Ownership Transferred event
-}
-
-// Add more event handlers as needed
