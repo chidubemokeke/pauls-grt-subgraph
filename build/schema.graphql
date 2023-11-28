@@ -1,21 +1,21 @@
 type Subgraph @entity {
-  id: ID!
-  name: String!
-  account: Account!
-  currentVersionHash: String # Tracks the current version
-  previousVersionHash: String # Optionally track the immediate previous version
+  id: ID! # Unique identifier for each subgraph entity.
+  name: String! # The name of the subgraph.
+  account: Account! # Reference to the account entity associated with this subgraph.
+  currentVersionHash: String # Hash of the current active version of the subgraph.
+  previousVersionHash: String # Hash of the previous version of the subgraph, if applicable.
 }
 
 type Account @entity {
-  id: ID!
-  queryFeesPaid: BigInt!
-  billingBalance: BigInt!
-  subgraphs: [Subgraph!]! @derivedFrom(field: "account")
+  id: ID! # Unique identifier for the account, typically the wallet address.
+  queryFeesPaid: BigInt! # Total query fees paid by the account, denominated in the smallest unit of currency.
+  billingBalance: BigInt! # Current billing balance of the account, can represent a credit or debit balance.
+  subgraphs: [Subgraph!]! @derivedFrom(field: "account") # List of subgraphs associated with this account, derived from the Subgraph entity.
 }
 
 type Transaction @entity {
-  id: ID!
-  account: Account!
-  amount: BigInt!
-  timestamp: BigInt
+  id: ID! # Unique identifier for the transaction, usually the transaction hash.
+  account: Account! # The account involved in the transaction.
+  amount: BigInt! # The amount of tokens/currency transferred in the transaction.
+  timestamp: BigInt # The timestamp of when the transaction occurred.
 }
