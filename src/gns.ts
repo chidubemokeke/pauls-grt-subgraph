@@ -24,7 +24,6 @@ export function handleTokensPulled(event: TokensPulledEvent): void {
   let account = AccountEntity.load(event.params.user.toHex())
   if (account) {
     account.billingBalance = account.billingBalance.minus(event.params.amount)
-    account.queryFeesPaid = BigInt.fromI32(0)
     account.save()
   }
 }
@@ -34,7 +33,6 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
   let account = AccountEntity.load(event.params.from.toHex())
   if (account) {
     account.billingBalance = account.billingBalance.minus(event.params.amount)
-    account.queryFeesPaid = BigInt.fromI32(0)
     account.save()
   }
 }
