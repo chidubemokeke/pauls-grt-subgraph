@@ -109,6 +109,19 @@ export class Subgraph extends Entity {
       this.set("previousVersionHash", Value.fromString(<string>value));
     }
   }
+
+  get queryFees(): BigInt {
+    let value = this.get("queryFees");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set queryFees(value: BigInt) {
+    this.set("queryFees", Value.fromBigInt(value));
+  }
 }
 
 export class Account extends Entity {
