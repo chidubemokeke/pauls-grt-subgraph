@@ -16,7 +16,6 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account.queryFeesPaid = BigInt.fromI32(0)
   }
   account.billingBalance = account.billingBalance.plus(event.params.amount)
-  account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
   account.save()
 }
 
