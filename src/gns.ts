@@ -14,14 +14,17 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account = new AccountEntity(event.params.user.toHex())
     account.billingBalance = BigInt.fromI32(0)
     account.queryFeesPaid = BigInt.fromI32(0)
+  } else {
+    // Ensure queryFeesPaid is never null/undefined
+    if (!account.queryFeesPaid) {
+      account.queryFeesPaid = BigInt.fromI32(0)
+    }
   }
 
   // Accumulate the queryFeesPaid
-  let amountToAdd = event.params.amount
-  account.queryFeesPaid = account.queryFeesPaid.plus(amountToAdd)
-
-  account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
+
+  // Save the updated entity
   account.save()
 }
 
