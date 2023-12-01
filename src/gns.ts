@@ -15,6 +15,11 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account.billingBalance = BigInt.fromI32(0)
     account.queryFeesPaid = BigInt.fromI32(0)
   }
+
+  // Accumulate the queryFeesPaid
+  let amountToAdd = event.params.amount
+  account.queryFeesPaid = account.queryFeesPaid.plus(amountToAdd)
+
   account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
   account.save()
