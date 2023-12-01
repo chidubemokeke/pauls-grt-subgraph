@@ -94,10 +94,10 @@ export function handleSubgraphVersionUpdated(
 ): void {
   let id = event.params.subgraphID.toHex()
   let subgraph = SubgraphEntity.load(id)
-  subgraph.queryFees = BigInt.fromI32(0)
 
   if (!subgraph) {
     subgraph = new SubgraphEntity(id)
+    subgraph.queryFees = BigInt.fromI32(0)
     // Initialize other fields as necessary
   }
 
