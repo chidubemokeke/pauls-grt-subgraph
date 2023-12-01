@@ -23,19 +23,27 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
 // Handle the TokensPulled event
 export function handleTokensPulled(event: TokensPulledEvent): void {
   let account = AccountEntity.load(event.params.user.toHex())
-  if (account) {
-    account.billingBalance = account.billingBalance.minus(event.params.amount)
-    account.save()
+  if (!account) {
+    account = new AccountEntity(event.params.user.toHex())
+    account.billingBalance = BigInt.fromI32(0)
+    account.queryFeesPaid = BigInt.fromI32(0)
   }
+  account.billingBalance = account.billingBalance.minus(event.params.amount)
+  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount)
+  account.save()
 }
 
 // Handle the TokensRemoved event
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
   let account = AccountEntity.load(event.params.from.toHex())
-  if (account) {
-    account.billingBalance = account.billingBalance.minus(event.params.amount)
-    account.save()
+  if (!account) {
+    account = new AccountEntity(event.params.from.toHex())
+    account.billingBalance = BigInt.fromI32(0)
+    account.queryFeesPaid = BigInt.fromI32(0)
   }
+  account.billingBalance = account.billingBalance.minus(event.params.amount)
+  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount)
+  account.save()
 }
 
 import {
