@@ -3,9 +3,16 @@ import {
   TokensAdded as TokensAddedEvent,
   TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-  // Import other events if needed
 } from '../generated/Billing/Billing'
-import { Account as AccountEntity } from '../generated/schema'
+import {
+  SubgraphPublished as SubgraphPublishedEvent,
+  SubgraphUpgraded as SubgraphUpgradedEvent,
+  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
+} from '../generated/GNS/GNS'
+import {
+  Account as AccountEntity,
+  Subgraph as SubgraphEntity,
+} from '../generated/schema'
 
 // Handle the TokensAdded event
 export function handleTokensAdded(event: TokensAddedEvent): void {
@@ -14,17 +21,8 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account = new AccountEntity(event.params.user.toHex())
     account.billingBalance = BigInt.fromI32(0)
     account.queryFeesPaid = BigInt.fromI32(0)
-  } else {
-    // Ensure queryFeesPaid is never null/undefined
-    if (!account.queryFeesPaid) {
-      account.queryFeesPaid = BigInt.fromI32(0)
-    }
   }
-
-  // Accumulate the queryFeesPaid
-  account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
-
-  // Save the updated entity
+  account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.save()
 }
 
@@ -37,7 +35,6 @@ export function handleTokensPulled(event: TokensPulledEvent): void {
     account.queryFeesPaid = BigInt.fromI32(0)
   }
   account.billingBalance = account.billingBalance.minus(event.params.amount)
-  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount)
   account.save()
 }
 
@@ -50,79 +47,56 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
     account.queryFeesPaid = BigInt.fromI32(0)
   }
   account.billingBalance = account.billingBalance.minus(event.params.amount)
-  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount)
   account.save()
 }
 
-import {
-  SubgraphPublished as SubgraphPublishedEvent,
-  SubgraphUpgraded as SubgraphUpgradedEvent,
-  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
-} from '../generated/GNS/GNS'
-import { Subgraph as SubgraphEntity } from '../generated/schema'
-
 // Handle SubgraphPublished event
 export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let id = event.params.subgraphID.toHex()
-  let subgraph = SubgraphEntity.load(id)
+  let subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+  subgraph.name = event.params.name
+  subgraph.queryFees = BigInt.fromI32(0)
 
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id)
-    subgraph.queryFees = BigInt.fromI32(0)
-    // Initialize other fields as necessary
+  let account = AccountEntity.load(event.params.publisher.toHex())
+  if (!account) {
+    account = new AccountEntity(event.params.publisher.toHex())
+    account.queryFeesPaid = BigInt.fromI32(0)
+    account.billingBalance = BigInt.fromI32(0)
   }
-
-  // The event provides a subgraphDeploymentID, which you might want to store
-  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
-
-  // The event also provides reserveRatio, which you might want to store
-  // Assuming you have a field in your Subgraph entity to store this ratio
-  // subgraph.reserveRatio = event.params.reserveRatio
-
+  subgraph.account = account.id
   subgraph.save()
 }
 
 // Handle SubgraphUpgraded event
 export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
-  let id = event.params.subgraphID.toHex()
-  let subgraph = SubgraphEntity.load(id)
-
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id)
-    subgraph.queryFees = BigInt.fromI32(0)
-    // Initialize other fields as necessary
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+  if (subgraph) {
+    subgraph.previousVersionHash = subgraph.currentVersionHash
+    subgraph.currentVersionHash = event.params.newSubgraphDeploymentID.toHex()
+    subgraph.save()
   }
-
-  // The event provides a subgraphDeploymentID, which you might want to store
-  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
-
-  // You can access other parameters like oldVersion, newVersion, and versionMetadata
-  // event.params.oldVersion
-  // event.params.newVersion
-  // event.params.versionMetadata
-
-  subgraph.save()
 }
 
 // Handle SubgraphVersionUpdated event
 export function handleSubgraphVersionUpdated(
   event: SubgraphVersionUpdatedEvent,
 ): void {
-  let id = event.params.subgraphID.toHex()
-  let subgraph = SubgraphEntity.load(id)
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+  if (subgraph) {
+    subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
+    subgraph.save()
+  }
+}
 
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id)
-    subgraph.queryFees = BigInt.fromI32(0)
-    // Initialize other fields as necessary
+// Example: Handler for a hypothetical QueryFeesPaid event
+export function handleQueryFeesPaid(event: QueryFeesPaidEvent): void {
+  let account = AccountEntity.load(event.params.user.toHex())
+  if (!account) {
+    account = new AccountEntity(event.params.user.toHex())
+    account.billingBalance = BigInt.fromI32(0)
+    account.queryFeesPaid = BigInt.fromI32(0)
   }
 
-  // The event provides a subgraphDeploymentID, which you might want to store
-  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
-
-  // The event also provides versionMetadata, which you might want to store
-  // Assuming you have a field in your Subgraph entity to store this metadata
-  // subgraph.versionMetadata = event.params.versionMetadata
-
-  subgraph.save()
+  // Increment the queryFeesPaid by the amount in the event
+  account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
+  account.save()
 }
