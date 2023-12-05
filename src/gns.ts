@@ -10,15 +10,22 @@ import { Account as AccountEntity } from '../generated/schema'
 // Handle the TokensAdded event
 export function handleTokensAdded(event: TokensAddedEvent): void {
   let account = AccountEntity.load(event.params.user.toHex())
+
   if (!account) {
     account = new AccountEntity(event.params.user.toHex())
     account.billingBalance = BigInt.fromI32(0)
     account.queryFeesPaid = BigInt.fromI32(0)
   } else {
+    // Check if queryFeesPaid is null and set it to zero if it is
     if (account.queryFeesPaid == null) {
-      account.queryFeesPaid = BigInt.fromI32(0) // Ensure it's set for an existing account
+      account.queryFeesPaid = BigInt.fromI32(0)
     }
   }
+
+  account.billingBalance = account.billingBalance.plus(event.params.amount)
+  account.save()
+}
+
 
   // Accumulate the queryFeesPaid
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
