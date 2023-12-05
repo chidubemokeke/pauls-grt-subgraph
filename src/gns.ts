@@ -15,22 +15,15 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account = new AccountEntity(event.params.user.toHex())
     account.billingBalance = BigInt.fromI32(0)
     account.queryFeesPaid = BigInt.fromI32(0)
-  } else {
-    // Check if queryFeesPaid is null and set it to zero if it is
-    if (account.queryFeesPaid == null) {
-      account.queryFeesPaid = BigInt.fromI32(0)
-    }
+  }
+
+  // Use a different approach to check if queryFeesPaid is null
+  if (!account.queryFeesPaid) {
+    account.queryFeesPaid = BigInt.fromI32(0)
   }
 
   account.billingBalance = account.billingBalance.plus(event.params.amount)
-  account.save()
-}
-
-
-  // Accumulate the queryFeesPaid
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
-
-  // Save the updated entity
   account.save()
 }
 
