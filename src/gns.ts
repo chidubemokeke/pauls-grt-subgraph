@@ -8,50 +8,35 @@ import {
 import { Account as AccountEntity } from "../generated/schema";
 
 // Handle the TokensAdded event
-export function handleTokensAdded(event: TokensAddedEvent): void {
-  let account = AccountEntity.load(event.params.user.toHex());
-
-  if (!account) {
-    account = new AccountEntity(event.params.user.toHex());
+export function createOrLoadAccount(id: string): AccountEntity {
+  let account = AccountEntity.load(id);
+  if (account == null) {
+    account = new AccountEntity(id);
     account.billingBalance = BigInt.fromI32(0);
     account.queryFeesPaid = BigInt.fromI32(0);
   }
+  return account;
+}
 
-  // Use a different approach to check if queryFeesPaid is null
-  if (!account.queryFeesPaid) {
-    account.queryFeesPaid = BigInt.fromI32(0);
-  }
-
+export function handleTokensAdded(event: TokensAddedEvent): void {
+  let account = createOrLoadAccount(event.params.user.toHex());
   account.billingBalance = account.billingBalance.plus(event.params.amount);
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount);
   account.save();
 }
 
-// Handle the TokensPulled event
 export function handleTokensPulled(event: TokensPulledEvent): void {
-  let account = AccountEntity.load(event.params.user.toHex());
-  if (!account) {
-    account = new AccountEntity(event.params.user.toHex());
-    account.billingBalance = BigInt.fromI32(0);
-    account.queryFeesPaid = BigInt.fromI32(0);
-  }
+  let account = createOrLoadAccount(event.params.user.toHex());
   account.billingBalance = account.billingBalance.minus(event.params.amount);
-  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount);
   account.save();
 }
 
-// Handle the TokensRemoved event
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
-  let account = AccountEntity.load(event.params.from.toHex());
-  if (!account) {
-    account = new AccountEntity(event.params.from.toHex());
-    account.billingBalance = BigInt.fromI32(0);
-    account.queryFeesPaid = BigInt.fromI32(0);
-  }
+  let account = createOrLoadAccount(event.params.from.toHex());
   account.billingBalance = account.billingBalance.minus(event.params.amount);
-  account.queryFeesPaid = account.queryFeesPaid.minus(event.params.amount);
   account.save();
 }
+
 
 import {
   SubgraphPublished as SubgraphPublishedEvent,
@@ -62,14 +47,15 @@ import { Subgraph as SubgraphEntity } from "../generated/schema";
 
 // Handle SubgraphPublished event
 export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let id = event.params.subgraphID.toHex();
-  let subgraph = SubgraphEntity.load(id);
-
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id);
-    subgraph.queryFees = event.params.reserveRatio;
-    // Initialize other fields as necessary
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex());
+  if (subgraph == null) {
+    subgraph = new SubgraphEntity(event.params.subgraphID.toHex());
+    // Initialize other fields as necessary, including subgraph name
+    // subgraph.name = [Retrieve and assign subgraph name from event];
   }
+  subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex();
+  subgraph.save();
+}
 
   // The event provides a subgraphDeploymentID, which you might want to store
   subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex();
