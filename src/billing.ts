@@ -21,7 +21,18 @@ function createOrLoadAccount(id: string): Account {
 export function handleTokensAdded(event: TokensAddedEvent): void {
   let account = createOrLoadAccount(event.params.user.toHex());
   account.billingBalance = account.billingBalance.plus(event.params.amount);
-  account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount);
+
+  // Check if queryFeesPaid exists; if not, set it to zero
+  if (
+    account.queryFeesPaid === null ||
+    account.queryFeesPaid == BigInt.zero()
+  ) {
+    account.queryFeesPaid = BigInt.zero();
+  } else {
+    // Convert queryFeesPaid to BigInt if it's not already
+    account.queryFeesPaid = account.queryFeesPaid;
+  }
+
   account.save();
   // Additional logic for transactions or daily data
 }
