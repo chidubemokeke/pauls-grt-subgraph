@@ -23,19 +23,15 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
   account.billingBalance = account.billingBalance.plus(event.params.amount)
 
   // Check if queryFeesPaid exists; if not, set it to zero
-  if (
-    account.queryFeesPaid === null ||
-    account.queryFeesPaid == BigInt.zero()
-  ) {
+  if (account.queryFeesPaid === null) {
     account.queryFeesPaid = BigInt.zero()
-  } else {
-    // Convert queryFeesPaid to BigInt if it's not already
-    account.queryFeesPaid = account.queryFeesPaid
   }
-
-  account.save()
-  // Additional logic for transactions or daily data
+  // Convert queryFeesPaid to BigInt if it's not already
+  account.queryFeesPaid = account.queryFeesPaid
 }
+
+account.save()
+// Additional logic for transactions or daily data
 
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
   let account = createOrLoadAccount(event.params.from.toHex())
