@@ -27,7 +27,10 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
     account.queryFeesPaid = BigInt.zero()
   }
   // Convert queryFeesPaid to BigInt if it's not already
-  account.queryFeesPaid = account.queryFeesPaid
+  let queryFeeAmount = event.params.amount
+    .times(BigInt.fromI32(10))
+    .div(BigInt.fromI32(100))
+  account.queryFeesPaid = account.queryFeesPaid.plus(queryFeeAmount)
 
   account.save()
   // Additional logic for transactions or daily data

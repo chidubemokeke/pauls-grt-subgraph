@@ -99,3 +99,30 @@ export function handleSubgraphVersionUpdated(
 
   subgraph.save()
 }
+
+} from './helpers/helpers'
+import { fetchSubgraphMetadata, fetchSubgraphVersionMetadata } from './helpers/metadata'
+import { addresses } from '../../config/addresses'
+
+export function handleSubgraphMetadataUpdated(event: SubgraphMetadataUpdated): void {
+  let oldID = joinID([
+    event.params.graphAccount.toHexString(),
+    event.params.subgraphNumber.toString(),
+  ])
+  let subgraphID = getSubgraphID(event.params.graphAccount, event.params.subgraphNumber)
+
+  // Create subgraph
+  let subgraph = createOrLoadSubgraph(subgraphID, event.params.graphAccount, event.block.timestamp)
+
+  let hexHash = changetype<Bytes>(addQm(event.params.subgraphMetadata))
+  let base58Hash = hexHash.toBase58()
+
+  subgraph.metadataHash = event.params.subgraphMetadata
+  subgraph.ipfsMetadataHash = addQm(subgraph.metadataHash).toBase58()
+  subgraph = fetchSubgraphMetadata(subgraph, base58Hash)
+  subgraph.updatedAt = event.block.timestamp.toI32()
+  subgraph.save()
+
+  let subgraphDuplicate = duplicateOrUpdateSubgraphWithNewID(subgraph, oldID, 1)
+  subgraphDuplicate.save()
+}
