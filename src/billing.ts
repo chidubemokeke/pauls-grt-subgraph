@@ -28,10 +28,10 @@ export function handleTokensAdded(event: TokensAddedEvent): void {
   }
   // Convert queryFeesPaid to BigInt if it's not already
   account.queryFeesPaid = account.queryFeesPaid
-}
 
-account.save()
-// Additional logic for transactions or daily data
+  account.save()
+  // Additional logic for transactions or daily data
+}
 
 export function handleTokensRemoved(event: TokensRemovedEvent): void {
   let account = createOrLoadAccount(event.params.from.toHex())

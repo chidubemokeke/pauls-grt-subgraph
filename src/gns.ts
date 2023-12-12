@@ -49,6 +49,7 @@ export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
   let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
   if (subgraph == null) {
     subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+    subgraph.name = event.params.name
     // Initialize other fields as necessary, including subgraph name
     // subgraph.name = [Retrieve and assign subgraph name from event];
   }
