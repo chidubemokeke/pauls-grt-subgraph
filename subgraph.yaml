@@ -50,5 +50,9 @@ dataSources:
           handler: handleSubgraphUpgraded
         - event: SubgraphVersionUpdated(indexed uint256,indexed bytes32,bytes32)
           handler: handleSubgraphVersionUpdated
+        - event: SubgraphMetadataUpdated(indexed address,indexed uint256,bytes32)
+          handler: handleSubgraphMetadataUpdated
+        - event: SubgraphMetadataUpdated(indexed uint256,bytes32)
+          handler: handleSubgraphMetadataUpdatedV2
         # Include other relevant events here
       file: ./src/gns.ts
