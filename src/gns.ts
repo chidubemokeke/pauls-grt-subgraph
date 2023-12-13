@@ -14,10 +14,22 @@ import {
   Subgraph as SubgraphEntity,
 } from '../generated/schema'
 
+function createOrLoadAccount(id: string): AccountEntity {
+  let account = AccountEntity.load(id);
+  if (account === null) {
+    account = new AccountEntity(id);
+    account.billingBalance = BigInt.fromI32(0);
+    account.queryFeesPaid = BigInt.fromI32(0);
+  }
+  return account;
+}
+
+
 // Token Handlers
 
 export function handleTokensAdded(event: TokensAddedEvent): void {
   let account = createOrLoadAccount(event.params.user.toHex())
+  
   account.billingBalance = account.billingBalance.plus(event.params.amount)
   account.queryFeesPaid = account.queryFeesPaid.plus(event.params.amount)
   account.save()
@@ -38,7 +50,9 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
 // Subgraph Handlers
 
 export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex());
+  if (subgraph === null) {
+    subgraph = new SubgraphEntity(event.params.subgraphID.toHex());
   // Retrieve and assign subgraph name and other properties from event or external source
   subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
   // Link to the corresponding account
