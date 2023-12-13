@@ -3,20 +3,18 @@ import {
   TokensAdded as TokensAddedEvent,
   TokensPulled as TokensPulledEvent,
   TokensRemoved as TokensRemovedEvent,
-  // Import other events if needed
 } from '../generated/Billing/Billing'
-import { Account as AccountEntity } from '../generated/schema'
+import {
+  SubgraphPublished as SubgraphPublishedEvent,
+  SubgraphUpgraded as SubgraphUpgradedEvent,
+  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
+} from '../generated/GNS/GNS'
+import {
+  Account as AccountEntity,
+  Subgraph as SubgraphEntity,
+} from '../generated/schema'
 
-// Handle the TokensAdded event
-export function createOrLoadAccount(id: string): AccountEntity {
-  let account = AccountEntity.load(id)
-  if (account == null) {
-    account = new AccountEntity(id)
-    account.billingBalance = BigInt.fromI32(0)
-    account.queryFeesPaid = BigInt.fromI32(0)
-  }
-  return account
-}
+// Token Handlers
 
 export function handleTokensAdded(event: TokensAddedEvent): void {
   let account = createOrLoadAccount(event.params.user.toHex())
@@ -37,65 +35,32 @@ export function handleTokensRemoved(event: TokensRemovedEvent): void {
   account.save()
 }
 
-import {
-  SubgraphPublished as SubgraphPublishedEvent,
-  SubgraphUpgraded as SubgraphUpgradedEvent,
-  SubgraphVersionUpdated as SubgraphVersionUpdatedEvent,
-} from '../generated/GNS/GNS'
-import { Subgraph as SubgraphEntity } from '../generated/schema'
+// Subgraph Handlers
 
-// Handle SubgraphPublished event
 export function handleSubgraphPublished(event: SubgraphPublishedEvent): void {
-  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
-  if (subgraph == null) {
-    subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
-    subgraph.name = fetchSubgraphName(event.params.subgraphMetadata)
-    // subgraph.name = [Retrieve and assign subgraph name from event];
-  }
+  let subgraph = new SubgraphEntity(event.params.subgraphID.toHex())
+  // Retrieve and assign subgraph name and other properties from event or external source
   subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
+  // Link to the corresponding account
+  let account = createOrLoadAccount(event.transaction.from.toHexString())
+  subgraph.account = account.id
+  // Assign query fees and other properties
+  subgraph.queryFees = BigInt.zero()
   subgraph.save()
 }
 
-// Handle SubgraphUpgraded event
 export function handleSubgraphUpgraded(event: SubgraphUpgradedEvent): void {
-  let id = event.params.subgraphID.toHex()
-  let subgraph = SubgraphEntity.load(id)
-
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id)
-    // Initialize other fields as necessary
-  }
-
-  // The event provides a subgraphDeploymentID, which you might want to store
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+  // Logic to handle subgraph upgrade
   subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
-
-  // You can access other parameters like oldVersion, newVersion, and versionMetadata
-  // event.params.oldVersion
-  // event.params.newVersion
-  // event.params.versionMetadata
-
   subgraph.save()
 }
 
-// Handle SubgraphVersionUpdated event
 export function handleSubgraphVersionUpdated(
   event: SubgraphVersionUpdatedEvent,
 ): void {
-  let id = event.params.subgraphID.toHex()
-  let subgraph = SubgraphEntity.load(id)
-
-  if (!subgraph) {
-    subgraph = new SubgraphEntity(id)
-    subgraph.queryFees = new BigInt(0)
-    // Initialize other fields as necessary
-  }
-
-  // The event provides a subgraphDeploymentID, which you might want to store
+  let subgraph = SubgraphEntity.load(event.params.subgraphID.toHex())
+  // Logic to handle subgraph version update
   subgraph.currentVersionHash = event.params.subgraphDeploymentID.toHex()
-
-  // The event also provides versionMetadata, which you might want to store
-  // Assuming you have a field in your Subgraph entity to store this metadata
-  // subgraph.versionMetadata = event.params.versionMetadata
-
   subgraph.save()
 }
